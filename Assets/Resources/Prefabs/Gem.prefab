@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 8239906178106255123}
   - component: {fileID: -6613200062636862695}
   - component: {fileID: 8239906178106255120}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Gem
-  m_TagString: Untagged
+  m_TagString: Gem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

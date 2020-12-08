@@ -14,7 +14,8 @@ public enum ImpulseSounds
     HIT2,
     HIT3,
     DIE,
-    THROW
+    THROW,
+    PICKUP
 }
 
 public class PlayerBehaviour : MonoBehaviour
@@ -259,6 +260,12 @@ public class PlayerBehaviour : MonoBehaviour
         {
             TakeDamage(1);
         }
+
+        if (other.gameObject.CompareTag("Gem"))
+        {
+            HealDamage(10);
+            other.gameObject.SetActive(false);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -266,6 +273,20 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             TakeDamage(10);
+        }
+
+        if (other.gameObject.CompareTag("Moving Platform"))
+        {
+            other.gameObject.GetComponent<MovingPlatformController>().isActive = true;
+            transform.SetParent(other.gameObject.transform);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Moving Platform"))
+        {
+            other.gameObject.GetComponent<MovingPlatformController>().isActive = false;
         }
     }
 
@@ -314,6 +335,18 @@ public class PlayerBehaviour : MonoBehaviour
         if (health <= 0)
         {
             LoseLife();
+        }
+    }
+
+    public void HealDamage(int heal)
+    {
+        health += heal;
+
+        sounds[(int)ImpulseSounds.PICKUP].Play();
+
+        if(health > 100)
+        {
+            health = 100;
         }
     }
 
