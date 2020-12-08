@@ -9,6 +9,9 @@ public class MovingPlatformController : MonoBehaviour
     public Transform end;
     public bool isActive;
     public float platformTimer;
+    public float threshold;
+
+    public PlayerBehaviour player;
 
     private Vector3 distance;
 
@@ -19,6 +22,9 @@ public class MovingPlatformController : MonoBehaviour
         platformTimer = 0;
         isActive = false;
         distance = end.position - start.position;
+
+        player = FindObjectOfType<PlayerBehaviour>();
+        player.PlayerDeath.AddListener(_ResetSpawn);
     }
 
     // Update is called once per frame
@@ -30,6 +36,28 @@ public class MovingPlatformController : MonoBehaviour
             _Move();
 
         }
+        else
+        {
+            var distanceStart = Vector3.Distance(player.transform.position, start.position);
+            var distanceEnd = Vector3.Distance(player.transform.position, end.position);
+
+            if(distanceStart < distanceEnd) //closer to the start position
+            {
+                if (!(Vector3.Distance(transform.position, start.position) < threshold))
+                {
+                    platformTimer += Time.deltaTime;
+                    _Move();
+                }
+            }
+            else // closer to the end position
+            {
+                if (!(Vector3.Distance(transform.position, end.position) < threshold))
+                {
+                    platformTimer += Time.deltaTime;
+                    _Move();
+                }
+            }
+        }
     }
 
 
@@ -40,5 +68,12 @@ public class MovingPlatformController : MonoBehaviour
 
         transform.position = new Vector3(distanceX, 
                 distanceY, 0.0f);
+    }
+
+
+    private void _ResetSpawn()
+    {
+        platformTimer = 0;
+        transform.position = start.position;
     }
 }

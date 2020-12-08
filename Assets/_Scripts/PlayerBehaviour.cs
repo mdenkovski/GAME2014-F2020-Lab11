@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
+using UnityEngine.Events;
 
 [System.Serializable]
 public enum ImpulseSounds
@@ -32,7 +33,6 @@ public class PlayerBehaviour : MonoBehaviour
     public bool isJumping;
     public bool isCrouching;
     public Transform spawnPoint;
-    public Transform lookAheadPoint;
     public Transform lookInFrontPoint;
     public LayerMask collisionGroundLayer;
     public LayerMask collisionWallLayer;
@@ -64,10 +64,20 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("Acorn Firing")] 
     public Transform acornSpawn;
 
+    [Header("Parenting")]
+    public Transform parentObject;
+
+
+    [Header("Events")]
+    public UnityEvent PlayerDeath;
+
     private Rigidbody2D m_rigidBody2D;
     private SpriteRenderer m_spriteRenderer;
     private Animator m_animator;
     private RaycastHit2D groundHit;
+
+
+    
     
 
     // Start is called before the first frame update
@@ -287,6 +297,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Moving Platform"))
         {
             other.gameObject.GetComponent<MovingPlatformController>().isActive = false;
+            transform.SetParent(parentObject);
         }
     }
 
@@ -315,6 +326,11 @@ public class PlayerBehaviour : MonoBehaviour
             health = 100;
             healthBar.SetValue(health);
             transform.position = spawnPoint.position;
+            m_rigidBody2D.velocity = new Vector2(0.0f, 0.0f);
+
+
+            //send message or reset somehow
+            PlayerDeath.Invoke();
         }
         else
         {
